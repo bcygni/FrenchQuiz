@@ -1,0 +1,15 @@
+cat	chat	m
+dog	chien	m
+cow	vache	f
+man	homme	m
+woman	femme	f
+duck	canard	m
+fish poisson	m
+mouse	souris	f
+tree	arbre	f
+bird	oiseau	m
+animal	animal	m
+orange	orange	f
+apple	pomme	f
+computer	ordinateur	m
+insect	insecte m
