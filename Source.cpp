@@ -32,7 +32,12 @@ int noun_quiz(Noun nouns[], int);  //quiz function for nouns -takes an array of 
 int verb_quiz(Verb verbs[]);  //quiz function for nouns -takes an array of Verbs and # of questions, returns score as an int
 int random_int(int, int); //function to generate a random int between min and max
 bool search_list(int, vector<int>); //function to search a vector of integers. Returns true if integer is in vector
-vector<int> random_numbers_vector(int); //function to generate a vector of vector of random integers that do not repeat between 0 and max
+vector<int> random_numbers_vector(int); //function to generate a vector of random integers
+
+//function that will add an article to the word depending on the first character of the word and the gender
+string whichArticleEnglish(string, unsigned r);
+string whichArticleFrench(string, char, unsigned r);
+
 
 int main() {
 
@@ -130,31 +135,104 @@ string input_answer() {  //returns a user response in all lowercase
 
 int noun_quiz(Noun nouns[], int num_of_questions) {  //the nouns quiz which takes a list of nouns and returns a score
 
-	string answer;
+	string answer; //store the user's answer
+	string correct_answer; //store the correct answer
+	string word_articles[2]; //the article (the/a & le/un) that will go in front of the words
 	int score = 0;
 
 	cin.ignore(1000, '\n');
 
 	for (int question = 0; question < num_of_questions; question++) {
 
+		unsigned r = random_int(1, 2);  //randomize whether to use 1) the & la/le or 2) a/an & un/une
+		string english_word = whichArticleEnglish(nouns[question].english, r) + nouns[question].english;
+		string french_word = whichArticleFrench(nouns[question].french, nouns[question].gender, r) + nouns[question].french;
+
 		cout << endl << endl << endl;
 		cout << "\nQuestion #" << question + 1 
-			<< "\n\tTranslate <" << nouns[question].english << "> into French.\n";
+			<< "\n\tTranslate <" << english_word << "> into French.\n";
 
 		answer = input_answer();
 
-		if (answer == nouns[question].french) {
+		if (answer == french_word) {
 			cout << "\nCorrect!\n";
 			score++;
 		}
+
 		else {
-			cout << "\nIncorrect.\n" << "The correct answer is <" << nouns[question].french << ">\nPress enter to continue.\n";
+			cout << "\nIncorrect.\n" << "The correct answer is <" << french_word << ">\nPress enter to continue.\n";
 			cin.get();
 		}
 	}
 
 	return score;
 }
+
+
+//these two functions  adds the articles the/a/an to the english word and la/le/un/une to the french word
+//r == 1 -> the & la/le   r == 2 -> a/an & un/une
+string whichArticleFrench(string french, char gender, unsigned r) {  
+
+	string article; //store the actual article
+
+	//if using la/le (the)
+	if (r == 1) {
+
+		//if the first letter of the french word begins with a vowel - then the article is always <l'> contraction
+		if (french[0] == 'a' || french[0] == 'e' || french[0] == 'i' || french[0] == 'o' || french[0] == 'u' || french[0] == 'h') {
+			article = "l'";
+			return article;
+		}
+
+		//if the word is masculine
+		if (gender == 'm') {
+			article = "le ";
+		}
+		else if (gender == 'f') {
+			article = "la ";
+		}
+	}
+
+	//if using un/une (a)  --no contractions for un/une
+	else if (r == 2) {
+
+		if (gender == 'm') {
+			article = "un ";
+		}
+		else if (gender == 'f') {
+			article = "une ";
+		}
+	}
+
+	return article;
+
+}
+
+
+string whichArticleEnglish(string english, unsigned r) {
+
+	string article; //store the actual article
+
+	//if using "the"
+	if (r == 1) {
+		article = "the ";
+	} 
+
+	//if using a/an
+	else if (r == 2) {
+
+		//if first letter of english word begins with a vowel return "an"
+		if (english[0] == 'a' || english[0] == 'e' || english[0] == 'i' || english[0] == 'o' || english[0] == 'u') {
+			article = "an ";
+		}
+		else {
+			article = "a ";
+		}
+	}
+	return article;
+}
+
+
 
 
 int verb_quiz(Verb verbs[]) {
@@ -165,10 +243,8 @@ int verb_quiz(Verb verbs[]) {
 
 
 
-
-
 /* The following functions are used to generate a vector of randomized integers
-that do not repeat to be used to randomize the index values of the 
+that do not repeat. This is used to randomize the index values of the 
 words array for the quiz.
 
 First - create an empty vector called numList with the starting size of the NUMBER_OF_WORDS constant.
@@ -178,7 +254,7 @@ Next - check if the random number is in the numList vector we created earlier
 	if it is in the vector, then ignore and generate another random number
 The end result is a vector of integers between 0 and NUMBER_OF_WORDS that do not repeat.
 These random numbers will be used to place the words in a random order for the quiz
-while also ensuring the words do not repeat */  //I may have made this more complicated than it needed to be...
+while also ensuring the words do not repeat */ //I may have made this more complicated than it needed to be...
 
 
 vector<int> random_numbers_vector(int max) {
@@ -194,7 +270,6 @@ vector<int> random_numbers_vector(int max) {
 			i++;
 		}
 	}
-	//cout << "Vector successfully created." << endl;
 	return numList;
 }
 
@@ -203,9 +278,6 @@ int random_int(int min, int max) {  //generate a random integer between min and 
 
 	int x;
 	x = rand() % max + min;  //add the min to ensures that the random number is above the minimum (min always = 0 for now)
-
-	//cout << "\n\n\n**********SEARCHING FOR " << x << " ********************" << endl << endl << endl;
-
 	return x;
 }
 
