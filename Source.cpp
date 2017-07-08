@@ -1,4 +1,4 @@
-#include <iostream>
+ #include <iostream>
 #include <fstream> //to open files
 #include <string> //to use string objects
 #include <vector> //to use vector objects
@@ -89,7 +89,7 @@ int main() {
 
 			input_file.close();
 
-			score = noun_quiz(word_list, NUMBER_OF_WORDS);
+			score = noun_quiz(word_list, NUMBER_OF_WORDS);  //run the noun_quiz function which will return a score
 
 			cout << "\nYour score is: " << score;
 
@@ -150,6 +150,8 @@ int noun_quiz(Noun nouns[], int num_of_questions) {  //the nouns quiz which take
 		else {
 			cout << "\nIncorrect.\n" << "The correct answer is <" << nouns[question].french << ">\nPress enter to continue.\n";
 			cin.get();
+			cin.ignore(1000, '\n');
+
 		}
 	}
 
